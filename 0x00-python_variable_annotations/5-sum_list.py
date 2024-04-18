@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""Defines function sum_list"""
+"""
+Defines function sum_list
+"""
 from typing import List
 
 
