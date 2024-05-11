@@ -30,10 +30,29 @@ class TestAccessNestedMap(unittest.TestCase):
         Test the access_nested_map function
 
         Asserts:
-            Asserts that the result of `access_nested_map` is equal
+            Asserts that the result of 'access_nested_map' is equal
             to accessed_val.
         """
         self.assertEqual(access_nested_map(nested_map, path), accessed_val)
+
+    @parameterized.expand([
+        ({}, ("a",), 'a'),
+        ({"a": 1}, ("a", "b"), 'b'),
+    ])
+    def test_access_nested_map_exception(
+            self,
+            nested_map: Mapping,
+            path: Sequence,
+            msg: str) -> None:
+        """
+        Test the access_nested_map function's error handling
+
+        Asserts:
+            Asserts that a KeyError with 'msg' is raised if current
+            nested_map is actually not a dict.
+        """
+        with self.assertRaisesRegex(KeyError, msg):
+            access_nested_map(nested_map, path)
 
 
 if __name__ == '__main__':
