@@ -2,10 +2,11 @@
 """
 Defines the class TestAccessNestedMap
 """
-from utils import access_nested_map
+from utils import access_nested_map, get_json
 from parameterized import parameterized
 import unittest
-from typing import Any, Sequence, Mapping
+from unittest.mock import patch, Mock
+from typing import Any, Sequence, Mapping, Dict
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -14,6 +15,7 @@ class TestAccessNestedMap(unittest.TestCase):
 
     Methods:
         test_access_nested_map
+        test_access_nested_map_exception
     """
 
     @parameterized.expand([
@@ -53,6 +55,40 @@ class TestAccessNestedMap(unittest.TestCase):
         """
         with self.assertRaisesRegex(KeyError, msg):
             access_nested_map(nested_map, path)
+
+
+class TestGetJson(unittest.TestCase):
+    """
+    Class for testing get_json from utils.
+
+    Methods:
+        test_get_json
+    """
+    @parameterized.expand([
+       ("http://example.com", {"payload": True}),
+       ("http://holberton.io", {"payload": False}),
+    ])
+    @patch('utils.requests.get')
+    def test_get_json(
+        self,
+        test_url: str,
+        test_payload: Dict,
+        mock_get) -> None:
+        """
+        Test the get_json function.
+
+        Asserts:
+            That requests is called with the right url.
+            Function returns faked response.
+        """
+        mock_response = Mock()
+        response_dict = test_payload
+        mock_response.json.return_value = response_dict
+        mock_get.return_value = mock_response
+
+        response = get_json(test_url)
+        mock_get.assert_called_once_with(test_url)
+        self.assertEqual(response, response_dict)
 
 
 if __name__ == '__main__':
