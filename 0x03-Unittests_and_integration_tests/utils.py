@@ -65,7 +65,7 @@ def memoize(fn: Callable) -> Callable:
     """
     attr_name = "_{}".format(fn.__name__)
 
-    @property
+
     @wraps(fn)
     def memoized(self):
         """"memoized wraps"""
@@ -73,4 +73,4 @@ def memoize(fn: Callable) -> Callable:
             setattr(self, attr_name, fn(self))
         return getattr(self, attr_name)
 
-    return memoized
+    return property(memoized)
