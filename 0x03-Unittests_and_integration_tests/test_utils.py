@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-Defines the class TestAccessNestedMap
+Defines the classes for testing functions in the
+module utils.py.
 """
 from utils import (
     access_nested_map,
     get_json,
     memoize
     )
+from functools import lru_cache
 from parameterized import parameterized
 import unittest
 from unittest.mock import patch, Mock

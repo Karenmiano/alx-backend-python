@@ -48,31 +48,39 @@ class TestGetWeather(unittest.TestCase):
           response = self.weather_client.get_current_weather("some_city")
         mock_response.raise_for_status.assert_called_once()
         
-def factorial(n, cache={}):
-    print(cache)
-    if n in cache:
-        return cache[n]
-    if n == 0:
-        return 1
-    result = n * factorial(n - 1)
-    cache[n] = result
-    print(cache)
-    return result
+
+def memoize(f):
+    cache = {}
+    def memoized_function(*args):
+        if args in cache:
+            return cache[args] # Return the cached result
+        else:
+            result = f(*args)  # Call the function with the arguments
+            cache[args] = result  # Store the result in the cache
+            return result
+    return memoized_function
+
+@memoize
+def fibonacci(n):
+    if n < 2:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
 
 
 class MyClass:
     def __init__(self, value):
         self._value = value
 
-    def get_value(self):
+    @property
+    def value(self):
         return self._value
 
-    def set_value(self, value):
+    @value.setter
+    def value(self, value):
         self._value = value
-
-    value = property(get_value, set_value)
 
 
 if __name__ == '__main__':
-    obj = MyClass(5)
+    obj = MyClass('foo')
+    obj.value = 'bar'
     print(obj.value)
