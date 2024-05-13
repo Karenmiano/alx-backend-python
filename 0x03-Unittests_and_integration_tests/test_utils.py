@@ -2,7 +2,11 @@
 """
 Defines the class TestAccessNestedMap
 """
-from utils import access_nested_map, get_json
+from utils import (
+    access_nested_map,
+    get_json,
+    memoize
+    )
 from parameterized import parameterized
 import unittest
 from unittest.mock import patch, Mock
@@ -89,6 +93,42 @@ class TestGetJson(unittest.TestCase):
         response = get_json(test_url)
         mock_get.assert_called_once_with(test_url)
         self.assertEqual(response, response_dict)
+
+
+class TestMemoize(unittest.TestCase):
+    """
+    Class for testing memoized method a_property
+
+    Methods:
+        test_memoize
+    """
+
+    def test_memoize(self):
+        """
+        Tests the memoized method a_property.
+
+        Asserts:
+            That the method returns the same value when called
+            more than once.
+            Helper method a_method is only called once.(Memoization)
+        """
+        class TestClass:
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        with patch.object(
+                TestClass,
+                'a_method',
+                return_value=42) as mock_method:
+            test_obj = TestClass()
+            val1 = test_obj.a_property
+            val2 = test_obj.a_property
+            self.assertEqual(val1, val2)
+            mock_method.assert_called_once()
 
 
 if __name__ == '__main__':
