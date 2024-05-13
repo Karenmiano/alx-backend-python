@@ -66,6 +66,10 @@ def fibonacci(n):
         return n
     return fibonacci(n-1) + fibonacci(n-2)
 
+@memoize
+def foo(n):
+    print(n)
+    return n
 
 class MyClass:
     def __init__(self, value):
@@ -81,6 +85,6 @@ class MyClass:
 
 
 if __name__ == '__main__':
-    obj = MyClass('foo')
-    obj.value = 'bar'
-    print(obj.value)
+    print(foo(2))
+    print(foo(2))
+    print(foo(3))

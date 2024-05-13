@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Defines the classes for testing functions in the
-module utils.py.
+module utils.py
 """
 from utils import (
     access_nested_map,
@@ -131,7 +131,7 @@ class TestMemoize(unittest.TestCase):
             val2 = test_obj.a_property
             self.assertEqual(val1, val2)
             mock_method.assert_called_once()
-
+    
 
 if __name__ == '__main__':
     unittest.main()
