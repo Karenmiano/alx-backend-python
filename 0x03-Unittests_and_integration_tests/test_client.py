@@ -100,10 +100,12 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         Sets up a GithubOrgClient object.
         """
         cls.client = GithubOrgClient("google")
-        cls.get_patcher = patch('utils.requests.get')
+        cls.get_patcher = patch('requests.get')
         cls.mocked_get = cls.get_patcher.start()
 
         def side_effect(*args, **kwargs):
+            """
+            """
             url = args[0]
             mocked_response = Mock()
             if url == cls.org_payload["repos_url"]:

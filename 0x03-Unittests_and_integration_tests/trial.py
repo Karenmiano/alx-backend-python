@@ -83,8 +83,20 @@ class MyClass:
     def value(self, value):
         self._value = value
 
+sample = 10
+class TestClass(unittest.TestCase):
+    def setUp(self):
+        patcher = patch('trial.sample')
+        self.mock_sample = patcher.start()
+
+    def test_sample(self):
+        print(self.mock_sample)
+
+
+class AnotherClass(unittest.TestCase):
+
+    def test_saple(self):
+        print(sample)
 
 if __name__ == '__main__':
-    print(foo(2))
-    print(foo(2))
-    print(foo(3))
+    unittest.main()
