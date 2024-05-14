@@ -4,8 +4,9 @@ Defines class for testing GithubOrgClient.
 """
 from client import GithubOrgClient
 import unittest
-from parameterized import parameterized
-from unittest.mock import patch, PropertyMock
+from parameterized import parameterized, parameterized_class
+from unittest.mock import patch, PropertyMock, Mock
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -74,6 +75,65 @@ class TestGithubOrgClient(unittest.TestCase):
         """Tests the has_license method."""
         client = GithubOrgClient('org')
         self.assertEqual(client.has_license(repo, license_key), expected)
+
+
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    [
+        (
+            TEST_PAYLOAD[0][0],
+            TEST_PAYLOAD[0][1],
+            TEST_PAYLOAD[0][2],
+            TEST_PAYLOAD[0][3],
+        ),
+    ]
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """
+    Does an Integration test of GithubOrgClient.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Begins the patch for 'utils.requests.get'
+        Sets up a GithubOrgClient object.
+        """
+        cls.client = GithubOrgClient("google")
+        cls.get_patcher = patch('utils.requests.get')
+        cls.mocked_get = cls.get_patcher.start()
+
+        def side_effect(*args, **kwargs):
+            url = args[0]
+            mocked_response = Mock()
+            if url == cls.org_payload["repos_url"]:
+                mocked_response.json.return_value = cls.repos_payload
+            else:
+                mocked_response.json.return_value = cls.org_payload
+            return mocked_response
+
+        cls.mocked_get.side_effect = side_effect
+
+    def test_public_repos(self):
+        """
+        Tests the method public_repos.
+        """
+        repos = self.client.public_repos()
+        self.assertEqual(repos, self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """
+        Tests public_repos with license argument.
+        """
+        repos = self.client.public_repos("apache-2.0")
+        self.assertEqual(repos, self.apache2_repos)
+
+    @classmethod
+    def tearDownClass(cls):
+        """
+        Ends the patch for 'utils.requests.get'.
+        """
+        cls.get_patcher.stop()
 
 
 if __name__ == '__main__':
